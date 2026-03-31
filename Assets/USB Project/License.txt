@@ -1,0 +1,20 @@
+	Jettelly The Unity Shaders Bible | Second Edition.
+	
+	Created and distributed by Jettelly Inc. (www.jettelly.com)
+	Version : Unity Engine 6000.3.0b1 (Beta)
+	
+	Date : 2025-10-02 first push
+	Date : 2025-11-13 (update) Shader Graph and ShaderLab properties
+	Date : 2026-02-03 (update) View to Tangent space
+
+		---
+	
+	License : ATTRIBUTION-NONCOMMERCIAL 4.0 INTERNATIONAL [CC BY-NC 4.0] 
+	https://creativecommons.org/licenses/by-nc/4.0/ 
+
+		---	
+
+	• https://jettelly.com/
+	• https://www.linkedin.com/company/jettelly
+	• https://x.com/ushadersbible
+	• https://x.com/jettelly
