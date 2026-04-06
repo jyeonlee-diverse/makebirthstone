@@ -86,6 +86,62 @@ namespace Birthstone.Editor
                       $"Press Play to see the birthstones.");
         }
 
+        [MenuItem("Birthstone/Setup Spinner Scene")]
+        public static void SetupSpinnerScene()
+        {
+            // Remove existing SpinnerManager
+            var existing = Object.FindAnyObjectByType<SpinnerManager>();
+            if (existing != null)
+                Object.DestroyImmediate(existing.gameObject);
+
+            // Load assets
+            Mesh gemMesh = null;
+            var allAssets = AssetDatabase.LoadAllAssetsAtPath(GemMeshPath);
+            foreach (var asset in allAssets)
+            {
+                if (asset is Mesh m) { gemMesh = m; break; }
+            }
+
+            var shader = AssetDatabase.LoadAssetAtPath<Shader>(ShaderPath);
+            var baseMap = AssetDatabase.LoadAssetAtPath<Texture2D>(BaseMapPath);
+
+            if (gemMesh == null || shader == null)
+            {
+                Debug.LogError("Gem mesh or shader not found!");
+                return;
+            }
+
+            // Remove BirthstoneManager/Camera if present
+            var bm = Object.FindAnyObjectByType<BirthstoneManager>();
+            if (bm != null) Object.DestroyImmediate(bm.gameObject);
+            var bc = Object.FindAnyObjectByType<BirthstoneCamera>();
+            if (bc != null) Object.DestroyImmediate(bc);
+
+            // Create SpinnerManager
+            var managerObj = new GameObject("SpinnerManager");
+            var manager = managerObj.AddComponent<SpinnerManager>();
+
+            var so = new SerializedObject(manager);
+            so.FindProperty("gemMesh").objectReferenceValue = gemMesh;
+            so.FindProperty("viewToTangentShader").objectReferenceValue = shader;
+            if (baseMap != null)
+                so.FindProperty("baseMap").objectReferenceValue = baseMap;
+            so.ApplyModifiedProperties();
+
+            // Make sure EventSystem exists for UI
+            if (Object.FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                var eventSystem = new GameObject("EventSystem");
+                eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                eventSystem.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+            }
+
+            Selection.activeGameObject = managerObj;
+            EditorUtility.SetDirty(managerObj);
+
+            Debug.Log("Spinner scene setup complete! Press Play to start.");
+        }
+
         [MenuItem("Birthstone/Create Single Gem")]
         public static void CreateSingleGem()
         {
