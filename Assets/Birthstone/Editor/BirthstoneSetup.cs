@@ -184,7 +184,8 @@ namespace Birthstone.Editor
             var mat = new Material(shader);
             mat.name = info.Name + "_Material";
             mat.SetColor("_ColorA", info.DeepColor);
-            mat.SetColor("_ColorB", info.BaseColor);
+            Color bright = Color.Lerp(info.BaseColor, Color.white, 0.5f);
+            mat.SetColor("_ColorB", bright);
             mat.SetFloat("_Smoothness", 0.8f);
             mat.SetColor("_SpecularColor", Color.white);
             mat.SetFloat("_Offset", 0.3f);

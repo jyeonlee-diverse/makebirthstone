@@ -17,7 +17,7 @@ namespace Birthstone
         [SerializeField] Texture2D baseMap;
 
         [Header("Gem")]
-        [SerializeField] float gemScale = 1.75f;
+        [SerializeField] float gemScale = 1.4f;
         [SerializeField] Vector3 gemPosition = new Vector3(0, 0, 0);
 
         // UI references (created at runtime)
@@ -301,8 +301,11 @@ namespace Birthstone
             var meshRenderer = currentGem.AddComponent<MeshRenderer>();
             var mat = new Material(viewToTangentShader);
             mat.name = currentGemInfo.Name + "_Material";
+            // ColorA = deep shadow color, ColorB = bright highlight color
+            // Brighten BaseColor so the basemap texture pattern is clearly visible
             mat.SetColor("_ColorA", currentGemInfo.DeepColor);
-            mat.SetColor("_ColorB", currentGemInfo.BaseColor);
+            Color bright = Color.Lerp(currentGemInfo.BaseColor, Color.white, 0.5f);
+            mat.SetColor("_ColorB", bright);
             mat.SetFloat("_Smoothness", 0.85f);
             mat.SetColor("_SpecularColor", Color.white);
             mat.SetFloat("_Offset", 0.3f);
