@@ -10,7 +10,7 @@ namespace Birthstone
     public class GemSpinner : MonoBehaviour
     {
         [Header("Spin Physics")]
-        [SerializeField] float swipeMultiplier = 0.25f;
+        [SerializeField] float swipeMultiplier = 0.12f;
         [SerializeField] float friction = 0.97f;
         [SerializeField] float minAngularVelocity = 5f;
 
