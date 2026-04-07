@@ -43,6 +43,29 @@ namespace Birthstone
         Text potionTitleText;
         GameObject currentPotion;
         GemSpinner potionSpinner;
+        int currentPaletteIndex = -1; // -1 = default prefab colors
+
+        // Potion color palettes: TopColor, BottomColor, FoamColor, RimColor
+        static readonly PotionPalette[] palettes = {
+            new PotionPalette("기본",       new Color(0f,0.69f,0.76f), new Color(0f,0.82f,0.30f), new Color(0.29f,0.99f,0.75f), new Color(0.69f,1f,0.33f)),
+            new PotionPalette("딸기",       new Color(1f,0.3f,0.4f),   new Color(0.8f,0.1f,0.2f), new Color(1f,0.7f,0.75f),     new Color(1f,0.5f,0.6f)),
+            new PotionPalette("포도",       new Color(0.6f,0.2f,0.8f), new Color(0.3f,0.1f,0.5f), new Color(0.8f,0.5f,1f),      new Color(0.7f,0.3f,1f)),
+            new PotionPalette("바다",       new Color(0.1f,0.5f,0.9f), new Color(0.05f,0.2f,0.6f),new Color(0.4f,0.8f,1f),      new Color(0.2f,0.6f,1f)),
+            new PotionPalette("태양",       new Color(1f,0.8f,0.2f),   new Color(1f,0.5f,0.1f),   new Color(1f,1f,0.6f),        new Color(1f,0.9f,0.3f)),
+            new PotionPalette("민트",       new Color(0.3f,0.9f,0.7f), new Color(0.1f,0.7f,0.5f), new Color(0.6f,1f,0.9f),      new Color(0.4f,1f,0.8f)),
+            new PotionPalette("장미",       new Color(0.9f,0.4f,0.6f), new Color(0.7f,0.15f,0.35f),new Color(1f,0.75f,0.85f),   new Color(1f,0.5f,0.7f)),
+            new PotionPalette("황금",       new Color(0.9f,0.75f,0.3f),new Color(0.7f,0.5f,0.1f), new Color(1f,0.95f,0.6f),     new Color(1f,0.85f,0.4f)),
+            new PotionPalette("라벤더",     new Color(0.7f,0.5f,0.9f), new Color(0.5f,0.3f,0.7f), new Color(0.85f,0.7f,1f),     new Color(0.8f,0.6f,1f)),
+            new PotionPalette("불꽃",       new Color(1f,0.4f,0.1f),   new Color(0.8f,0.1f,0.05f),new Color(1f,0.8f,0.3f),      new Color(1f,0.6f,0.2f)),
+        };
+
+        struct PotionPalette
+        {
+            public string name;
+            public Color top, bottom, foam, rim;
+            public PotionPalette(string n, Color t, Color b, Color f, Color r)
+            { name = n; top = t; bottom = b; foam = f; rim = r; }
+        }
 
         void Start()
         {
@@ -248,6 +271,51 @@ namespace Birthstone
                 new Vector2(0, -540), new Vector2(600, 50), 26,
                 FontStyle.Normal, TextAnchor.MiddleCenter, new Color(0.5f, 0.5f, 0.6f));
 
+            // Color palette
+            CreateText(potionPanel.transform, "PaletteLabel",
+                "색 조합", new Vector2(0, -600), new Vector2(400, 40), 26,
+                FontStyle.Bold, TextAnchor.MiddleCenter, new Color(0.7f, 0.7f, 0.8f));
+
+            float paletteStartX = -((palettes.Length - 1) * 0.5f) * 90f;
+            for (int i = 0; i < palettes.Length; i++)
+            {
+                float x = paletteStartX + i * 90f;
+                var palette = palettes[i];
+
+                var btnObj = new GameObject($"Palette_{i}", typeof(RectTransform));
+                btnObj.transform.SetParent(potionPanel.transform, false);
+                var rt = btnObj.GetComponent<RectTransform>();
+                rt.anchoredPosition = new Vector2(x, -670);
+                rt.sizeDelta = new Vector2(75, 75);
+
+                var image = btnObj.AddComponent<Image>();
+                image.color = palette.top;
+
+                var button = btnObj.AddComponent<Button>();
+                var colors = button.colors;
+                colors.normalColor = palette.top;
+                colors.highlightedColor = Color.Lerp(palette.top, Color.white, 0.3f);
+                colors.pressedColor = Color.Lerp(palette.top, Color.black, 0.2f);
+                button.colors = colors;
+
+                // Small inner circle showing bottom color
+                var innerObj = new GameObject("Inner", typeof(RectTransform));
+                innerObj.transform.SetParent(btnObj.transform, false);
+                var innerRt = innerObj.GetComponent<RectTransform>();
+                innerRt.anchoredPosition = Vector2.zero;
+                innerRt.sizeDelta = new Vector2(35, 35);
+                var innerImg = innerObj.AddComponent<Image>();
+                innerImg.color = palette.bottom;
+
+                // Label under swatch
+                CreateText(btnObj.transform, "Label", palette.name,
+                    new Vector2(0, -48), new Vector2(80, 30), 18,
+                    FontStyle.Normal, TextAnchor.MiddleCenter, new Color(0.6f, 0.6f, 0.7f));
+
+                int idx = i;
+                button.onClick.AddListener(() => OnPaletteSelected(idx));
+            }
+
             var backBtn = CreateButton(potionPanel.transform, "PotionBack",
                 "← 메인 메뉴", new Vector2(-380, 440), new Vector2(240, 80),
                 new Color(0.3f, 0.3f, 0.35f), 28);
@@ -370,9 +438,40 @@ namespace Birthstone
             potionSpinner = currentPotion.AddComponent<GemSpinner>();
             potionSpinner.OnSpinUpdate += OnPotionSpinUpdate;
             potionSpinner.OnFlick += OnPotionFlick;
-            potionSpinner.AddSpin(150f, 30f);
+            potionSpinner.AddSpin(75f, 15f);
 
             potionSpinCountText.text = "0";
+
+            // Apply palette if one was previously selected
+            if (currentPaletteIndex >= 0)
+                ApplyPotionPalette(palettes[currentPaletteIndex]);
+        }
+
+        void OnPaletteSelected(int index)
+        {
+            currentPaletteIndex = index;
+            if (currentPotion != null)
+                ApplyPotionPalette(palettes[index]);
+        }
+
+        void ApplyPotionPalette(PotionPalette palette)
+        {
+            if (currentPotion == null) return;
+
+            var renderers = currentPotion.GetComponentsInChildren<Renderer>();
+            foreach (var rend in renderers)
+            {
+                foreach (var mat in rend.materials)
+                {
+                    if (mat.HasProperty("_TopColor"))
+                    {
+                        mat.SetColor("_TopColor", palette.top);
+                        mat.SetColor("_BottomColor", palette.bottom);
+                        mat.SetColor("_FoamColor", palette.foam);
+                        mat.SetColor("_Rim_Color", palette.rim);
+                    }
+                }
+            }
         }
 
         #endregion

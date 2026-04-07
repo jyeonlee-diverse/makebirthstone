@@ -639,7 +639,7 @@ MonoBehaviour:
   viewToTangentShader: {fileID: 4800000, guid: d93ffdff31ea1ce42a0c2046cc3f73ec, type: 3}
   baseMap: {fileID: 2800000, guid: bc399624bcc205849b2907dedeb75a47, type: 3}
   potionPrefab: {fileID: 133900259191775370, guid: fdf597dc56c65d140bc9a582a757a9ca, type: 3}
-  potionScale: 150
+  potionScale: 30
   gemScale: 1.4
 --- !u!4 &1292682257
 Transform:

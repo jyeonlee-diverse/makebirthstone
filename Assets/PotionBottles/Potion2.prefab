@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Liquid
   updateMode: 0
-  MaxWobble: 0.03
+  MaxWobble: 0.15
   WobbleSpeedMove: 0.5
   fillAmount: 0.5
   Recovery: 1

@@ -139,7 +139,7 @@ namespace Birthstone
             spinner = currentPotion.AddComponent<GemSpinner>();
             spinner.OnSpinUpdate += OnSpinUpdate;
             spinner.OnFlick += OnFlick;
-            spinner.AddSpin(150f, 30f);
+            spinner.AddSpin(75f, 15f);
         }
 
         void Update()
