@@ -46,29 +46,29 @@ namespace Birthstone
         int currentPaletteIndex = -1; // -1 = default prefab colors
 
         // Potion color palettes: TopColor, BottomColor, FoamColor, RimColor
-        // Top↔Bottom: 보색/유사색 대비, Foam: Top의 밝은 파스텔 변주, Rim: Bottom 유사색이지만 채도 높고 쨍한 다른 색
+        // Top↔Bottom: 보색/유사색 대비, Foam: Top의 밝은 파스텔 변주, Rim: Bottom 유사색 + 채도↓ 명도↑
         static readonly PotionPalette[] palettes = {
-            //             Top(액체 위)          Bottom(액체 아래)       Foam(Top 파스텔 변주)    Rim(Bottom 유사+쨍한색)
+            //             Top(액체 위)          Bottom(액체 아래)       Foam(Top 파스텔 변주)    Rim(Bottom 유사, 채도↓명도↑)
             // 기본 (원래 프리팹 색상)
             new PotionPalette("기본",       new Color(0f,0.69f,0.76f), new Color(0f,0.82f,0.30f), new Color(0.29f,0.99f,0.75f), new Color(0.69f,1f,0.33f)),
-            // 보색: 빨강 + 청록 / Foam:연분홍 / Rim:쨍한 에메랄드
-            new PotionPalette("산호초",     new Color(1f,0.25f,0.3f),  new Color(0.1f,0.75f,0.7f),new Color(1f,0.65f,0.6f),     new Color(0.2f,1f,0.65f)),
-            // 보색: 보라 + 연두 / Foam:연라벤더 / Rim:쨍한 라임
-            new PotionPalette("마법숲",     new Color(0.55f,0.15f,0.85f),new Color(0.3f,0.85f,0.2f),new Color(0.7f,0.45f,1f),   new Color(0.6f,1f,0.15f)),
-            // 보색: 파랑 + 주황 / Foam:연하늘 / Rim:쨍한 골드
-            new PotionPalette("석양",       new Color(0.15f,0.35f,0.9f),new Color(1f,0.55f,0.1f), new Color(0.45f,0.65f,1f),    new Color(1f,0.8f,0.1f)),
-            // 유사색: 빨강 + 노랑 / Foam:연살구 / Rim:쨍한 레몬
-            new PotionPalette("화염",       new Color(0.95f,0.2f,0.15f),new Color(1f,0.85f,0.15f),new Color(1f,0.55f,0.4f),     new Color(0.95f,1f,0.2f)),
-            // 보색: 청록 + 마젠타 / Foam:연민트 / Rim:쨍한 핫핑크
-            new PotionPalette("오로라",     new Color(0.1f,0.8f,0.75f),new Color(0.85f,0.2f,0.7f),new Color(0.35f,1f,0.85f),    new Color(1f,0.3f,0.55f)),
-            // 유사색: 파랑 + 보라 / Foam:연하늘파랑 / Rim:쨍한 자주
-            new PotionPalette("심해",       new Color(0.1f,0.3f,0.9f), new Color(0.6f,0.15f,0.8f),new Color(0.4f,0.6f,1f),      new Color(0.85f,0.25f,1f)),
-            // 보색: 노랑 + 남보라 / Foam:연크림 / Rim:쨍한 인디고
-            new PotionPalette("별빛",       new Color(1f,0.9f,0.2f),   new Color(0.35f,0.2f,0.8f),new Color(1f,0.95f,0.55f),    new Color(0.5f,0.15f,1f)),
-            // 유사색: 핑크 + 주황 / Foam:연로즈 / Rim:쨍한 탠저린
-            new PotionPalette("노을",       new Color(0.95f,0.4f,0.55f),new Color(1f,0.65f,0.2f), new Color(1f,0.7f,0.7f),      new Color(1f,0.5f,0.05f)),
-            // 보색: 초록 + 자주 / Foam:연연두 / Rim:쨍한 체리
-            new PotionPalette("독초",       new Color(0.2f,0.85f,0.3f),new Color(0.8f,0.15f,0.35f),new Color(0.55f,1f,0.5f),    new Color(1f,0.2f,0.25f)),
+            // 보색: 빨강 + 청록 / Foam:연분홍 / Rim:밝은 민트
+            new PotionPalette("산호초",     new Color(1f,0.25f,0.3f),  new Color(0.1f,0.75f,0.7f),new Color(1f,0.65f,0.6f),     new Color(0.35f,1f,0.75f)),
+            // 보색: 보라 + 연두 / Foam:연라벤더 / Rim:밝은 연두
+            new PotionPalette("마법숲",     new Color(0.55f,0.15f,0.85f),new Color(0.3f,0.85f,0.2f),new Color(0.7f,0.45f,1f),   new Color(0.65f,1f,0.35f)),
+            // 보색: 파랑 + 주황 / Foam:연하늘 / Rim:밝은 앰버
+            new PotionPalette("석양",       new Color(0.15f,0.35f,0.9f),new Color(1f,0.55f,0.1f), new Color(0.45f,0.65f,1f),    new Color(1f,0.82f,0.3f)),
+            // 유사색: 빨강 + 노랑 / Foam:연살구 / Rim:밝은 크림옐로
+            new PotionPalette("화염",       new Color(0.95f,0.2f,0.15f),new Color(1f,0.85f,0.15f),new Color(1f,0.55f,0.4f),     new Color(0.97f,1f,0.4f)),
+            // 보색: 청록 + 마젠타 / Foam:연민트 / Rim:밝은 로즈
+            new PotionPalette("오로라",     new Color(0.1f,0.8f,0.75f),new Color(0.85f,0.2f,0.7f),new Color(0.35f,1f,0.85f),    new Color(1f,0.45f,0.65f)),
+            // 유사색: 파랑 + 보라 / Foam:연하늘파랑 / Rim:밝은 라일락
+            new PotionPalette("심해",       new Color(0.1f,0.3f,0.9f), new Color(0.6f,0.15f,0.8f),new Color(0.4f,0.6f,1f),      new Color(0.8f,0.4f,1f)),
+            // 보색: 노랑 + 남보라 / Foam:연크림 / Rim:밝은 퍼플
+            new PotionPalette("별빛",       new Color(1f,0.9f,0.2f),   new Color(0.35f,0.2f,0.8f),new Color(1f,0.95f,0.55f),    new Color(0.55f,0.35f,1f)),
+            // 유사색: 핑크 + 주황 / Foam:연로즈 / Rim:밝은 피치
+            new PotionPalette("노을",       new Color(0.95f,0.4f,0.55f),new Color(1f,0.65f,0.2f), new Color(1f,0.7f,0.7f),      new Color(1f,0.6f,0.25f)),
+            // 보색: 초록 + 자주 / Foam:연연두 / Rim:밝은 코랄
+            new PotionPalette("독초",       new Color(0.2f,0.85f,0.3f),new Color(0.8f,0.15f,0.35f),new Color(0.55f,1f,0.5f),    new Color(1f,0.4f,0.4f)),
         };
 
         struct PotionPalette
