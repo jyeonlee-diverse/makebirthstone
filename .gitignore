@@ -38,6 +38,9 @@ crashlytics-build.properties
 Thumbs.db
 .utmp/
 
+# Archives
+*.zip
+
 # Builds
 *.exe
 *.dll

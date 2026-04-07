@@ -12,6 +12,61 @@ namespace Birthstone.Editor
         const string GemMeshPath = "Assets/USB Project/Chapter 1/View to Tangent/Meshes/Gem.fbx";
         const string ShaderPath = "Assets/Birthstone/Shaders/ViewToTangent_Rainbow.shader";
         const string BaseMapPath = "Assets/USB Project/Chapter 1/View to Tangent/Textures/Pattern_01.png";
+        const string PotionPrefabPath = "Assets/PotionBottles/Potion2.prefab";
+
+        [MenuItem("Birthstone/Setup Main Menu Scene")]
+        public static void SetupMainMenuScene()
+        {
+            // Remove existing managers
+            var existing = Object.FindAnyObjectByType<MainMenuManager>();
+            if (existing != null) Object.DestroyImmediate(existing.gameObject);
+            var bm = Object.FindAnyObjectByType<BirthstoneManager>();
+            if (bm != null) Object.DestroyImmediate(bm.gameObject);
+            var sm = Object.FindAnyObjectByType<SpinnerManager>();
+            if (sm != null) Object.DestroyImmediate(sm.gameObject);
+            var pm = Object.FindAnyObjectByType<PotionSpinnerManager>();
+            if (pm != null) Object.DestroyImmediate(pm.gameObject);
+            var bc = Object.FindAnyObjectByType<BirthstoneCamera>();
+            if (bc != null) Object.DestroyImmediate(bc);
+
+            // Load assets
+            Mesh gemMesh = null;
+            var allAssets = AssetDatabase.LoadAllAssetsAtPath(GemMeshPath);
+            foreach (var asset in allAssets)
+            {
+                if (asset is Mesh m) { gemMesh = m; break; }
+            }
+            var shader = AssetDatabase.LoadAssetAtPath<Shader>(ShaderPath);
+            var baseMap = AssetDatabase.LoadAssetAtPath<Texture2D>(BaseMapPath);
+            var potionPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PotionPrefabPath);
+
+            if (gemMesh == null) { Debug.LogError($"Gem mesh not found: {GemMeshPath}"); return; }
+            if (shader == null) { Debug.LogError($"Shader not found: {ShaderPath}"); return; }
+            if (potionPrefab == null) { Debug.LogError($"Potion prefab not found: {PotionPrefabPath}"); return; }
+
+            // Create MainMenuManager
+            var managerObj = new GameObject("MainMenuManager");
+            var manager = managerObj.AddComponent<MainMenuManager>();
+
+            var so = new SerializedObject(manager);
+            so.FindProperty("gemMesh").objectReferenceValue = gemMesh;
+            so.FindProperty("viewToTangentShader").objectReferenceValue = shader;
+            if (baseMap != null) so.FindProperty("baseMap").objectReferenceValue = baseMap;
+            so.FindProperty("potionPrefab").objectReferenceValue = potionPrefab;
+            so.ApplyModifiedProperties();
+
+            // EventSystem
+            if (Object.FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                var eventSystem = new GameObject("EventSystem");
+                eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                eventSystem.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+            }
+
+            Selection.activeGameObject = managerObj;
+            EditorUtility.SetDirty(managerObj);
+            Debug.Log("Main Menu scene setup complete! Press Play to start.");
+        }
 
         [MenuItem("Birthstone/Setup Scene")]
         public static void SetupScene()
@@ -140,6 +195,54 @@ namespace Birthstone.Editor
             EditorUtility.SetDirty(managerObj);
 
             Debug.Log("Spinner scene setup complete! Press Play to start.");
+        }
+
+        [MenuItem("Birthstone/Setup Potion Spinner Scene")]
+        public static void SetupPotionSpinnerScene()
+        {
+            // Remove existing PotionSpinnerManager
+            var existing = Object.FindAnyObjectByType<PotionSpinnerManager>();
+            if (existing != null)
+                Object.DestroyImmediate(existing.gameObject);
+
+            // Load Potion2 prefab
+            const string prefabPath = "Assets/PotionBottles/Potion2.prefab";
+            var potionPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+
+            if (potionPrefab == null)
+            {
+                Debug.LogError($"Potion2 prefab not found at: {prefabPath}");
+                return;
+            }
+
+            // Remove other managers if present
+            var bm = Object.FindAnyObjectByType<BirthstoneManager>();
+            if (bm != null) Object.DestroyImmediate(bm.gameObject);
+            var sm = Object.FindAnyObjectByType<SpinnerManager>();
+            if (sm != null) Object.DestroyImmediate(sm.gameObject);
+            var bc = Object.FindAnyObjectByType<BirthstoneCamera>();
+            if (bc != null) Object.DestroyImmediate(bc);
+
+            // Create PotionSpinnerManager
+            var managerObj = new GameObject("PotionSpinnerManager");
+            var manager = managerObj.AddComponent<PotionSpinnerManager>();
+
+            var so = new SerializedObject(manager);
+            so.FindProperty("potionPrefab").objectReferenceValue = potionPrefab;
+            so.ApplyModifiedProperties();
+
+            // EventSystem for UI
+            if (Object.FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                var eventSystem = new GameObject("EventSystem");
+                eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                eventSystem.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+            }
+
+            Selection.activeGameObject = managerObj;
+            EditorUtility.SetDirty(managerObj);
+
+            Debug.Log("Potion Spinner scene setup complete! Press Play to start.");
         }
 
         [MenuItem("Birthstone/Create Single Gem")]
